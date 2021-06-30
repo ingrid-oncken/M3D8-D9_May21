@@ -153,6 +153,7 @@
             if(prodData.ok) {
               const newProd = await prodData.json()
               alert(`Sucess, product added! ${newProd._id}`)
+              console.log(newProd);
             }
 
           } catch (error) {
