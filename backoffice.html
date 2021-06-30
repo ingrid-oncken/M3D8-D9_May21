@@ -115,7 +115,7 @@
                   aria-describedby="ticket price"
                 />
 
-            <button type='button' onclick='handleSubmit()' class = 'btn btn-danger mt-3'>submit</button>
+            <button type='button' onclick='addBtn()' class = 'btn btn-warning mt-3'>submit</button>
 
 
             </form>
@@ -132,7 +132,7 @@
     <script>
       const addBtn = async (param) => {
         const url = "https://striveschool-api.herokuapp.com/api/product/"
-        const objFromEvent = {
+        const objEvent = {
             name : document.getElementById("name").value,
             description: document.getElementById("description").value,
             brand: document.getElementById("brand").value,
@@ -147,12 +147,12 @@
                   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGIwY2QyN2RjMTQ1ODAwMTVlNGFkZGUiLCJpYXQiOjE2MjUwNjA1MTcsImV4cCI6MTYyNjI3MDExN30.Ly4lWbamapDf5UQBIy9vFCJQgf1ZhlYSI9HhHzAHBsQ",
                   "Content-Type": "application/json" 
               },
-              body: json.stringfy(objFromEvent)
+              body: JSON.stringify(objEvent)
             })
 
             if(prodData.ok) {
               const newProd = await prodData.json()
-              alert(`Sucess, product added! ${param._id}`)
+              alert(`Sucess, product added! ${newProd._id}`)
             }
 
           } catch (error) {
