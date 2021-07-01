@@ -16,11 +16,11 @@
       crossorigin="anonymous"
     />
 
-    <title>Backoffice 2</title>
+    <title>DETAILS</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-info mb-5">
-      <a class="navbar-brand" href="/">Backoffice</a>
+      <a class="navbar-brand" href="/backoffice2.html">Backoffice</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -57,6 +57,7 @@
                 "updatedAt": "2019-07-19T09:32:10.535Z", //SERVER GENERATED
                 "__v": 0 //SERVER GENERATED
             } -->
+          <h3 id="titleOfForm"><span>EDIT </span>PROODUCT</h3>
           <form>
             <div class="form-group">
               <label for="name">Name</label>
@@ -95,7 +96,11 @@
               SUBMIT
             </button>
 
-            <button type="button" class="btn btn-danger mt-3 text-white">
+            <button
+              type="button"
+              class="btn btn-danger mt-3 text-white"
+              onclick="handleDelete()"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -114,6 +119,22 @@
               </svg>
             </button>
           </form>
+          <div
+            id="alertDeleted"
+            class="alert alert-warning alert-dismissible fade show d-none mt-3"
+            role="alert"
+          >
+            <strong>Deleted successfully!</strong> You will be redirected to
+            HOME.
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -128,22 +149,33 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      const eventId = new URLSearchParams(window.location.search).get("id")
-      const endpoint = eventId
-        ? "https://striveschool-api.herokuapp.com/api/product/" + eventId
+      const productId = new URLSearchParams(window.location.search).get("id")
+      const endpoint = productId
+        ? "https://striveschool-api.herokuapp.com/api/product/" + productId
         : "https://striveschool-api.herokuapp.com/api/product/"
-      const method = eventId ? "PUT" : "POST"
+      const method = productId ? "PUT" : "POST"
 
       window.onload = async () => {
-        if(eventId) {
+        if (productId) {
           const resp = await fetch(endpoint, {
-            method:
-
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGIwY2QyN2RjMTQ1ODAwMTVlNGFkZGUiLCJpYXQiOjE2MjUwNjA1MTcsImV4cCI6MTYyNjI3MDExN30.Ly4lWbamapDf5UQBIy9vFCJQgf1ZhlYSI9HhHzAHBsQ",
+              // "Content-Type": "application/json",
+            },
           })
-          const prod  = await resp.json()
+          const prodDetails = await resp.json()
+          console.log(prodDetails)
+
+          document.getElementById("name").value = prodDetails.name
+          document.getElementById("brand").value = prodDetails.brand
+          document.getElementById("description").value = prodDetails.description
+          document.getElementById("price").value = prodDetails.price
+          document.getElementById("image").value = prodDetails.imageUrl
+        } else {
+          document.querySelector("#titleOfForm > span").innerHTML = "NEW "
         }
       }
-
 
       const handleSubmit = async () => {
         event.preventDefault()
@@ -157,8 +189,8 @@
         }
 
         try {
-          const fetchedData = await fetch(url, {
-            method: "POST",
+          const fetchedData = await fetch(endpoint, {
+            method,
             headers: {
               Authorization:
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGIwY2QyN2RjMTQ1ODAwMTVlNGFkZGUiLCJpYXQiOjE2MjUwNjA1MTcsImV4cCI6MTYyNjI3MDExN30.Ly4lWbamapDf5UQBIy9vFCJQgf1ZhlYSI9HhHzAHBsQ",
@@ -171,6 +203,40 @@
           if (fetchedData.ok) {
             const product = await fetchedData.json()
             alert(`Added sucessfully ${product._id}`)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      const handleDelete = async () => {
+        try {
+          const response = await fetch(endpoint, {
+            method: "DELETE",
+            headers: {
+              Authorization:
+                "Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGIwY2QyN2RjMTQ1ODAwMTVlNGFkZGUiLCJpYXQiOjE2MjUwNjA1MTcsImV4cCI6MTYyNjI3MDExN30.Ly4lWbamapDf5UQBIy9vFCJQgf1ZhlYSI9HhHzAHBsQ",
+              //"Content-Type": "application/json",
+            },
+          })
+          if (response.ok) {
+            document.getElementById("alertDeleted").classList.remove("d-none")
+
+            setTimeout(() => {
+              window.location.assign("./home2.html")
+            }, 3000)
+          } else {
+            document.getElementById("alertDeleted").classList.remove("d-none")
+            document
+              .getElementById("alertDeleted")
+              .classList.remove("alert-warning")
+            document
+              .getElementById("alertDeleted")
+              .classList.add("alert-danger")
+
+            setTimeout(() => {
+              window.location.assign("./home2.html")
+            }, 3000)
           }
         } catch (error) {
           console.log(error)
